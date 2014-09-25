@@ -1,0 +1,308 @@
+<?xml version="1.0"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title></title>
+    <link>http://blog.sumukh.me</link>
+    <atom:link href="http://blog.sumukh.me/feed.xml" rel="self" type="application/rss+xml" />
+    <description></description>
+    <language>en-us</language>
+    <pubDate>Thu, 25 Sep 2014 02:19:08 +0000</pubDate>
+    <lastBuildDate>Thu, 25 Sep 2014 02:19:08 +0000</lastBuildDate>
+
+    
+    
+    <item>
+      <title>Building a Web App</title>
+      <link>http://blog.sumukh.me/Building-Web-App-Flask-Practical</link>
+      <pubDate>Wed, 24 Sep 2014 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://blog.sumukh.me/Building-Web-App-Flask-Practical</guid>
+      <description>&lt;p&gt;We’re going to build a web based quiz game today using Python 3 and a library called flask.&lt;/p&gt;
+
+&lt;h1 id=&quot;installing&quot;&gt;Installing&lt;/h1&gt;
+
+&lt;p&gt;We may need to install pip which we can do with this command.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;python3 -m pip install flask&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;You need to have python 3.4 or greater.&lt;/p&gt;
+
+&lt;h1 id=&quot;starting_out&quot;&gt;Starting out&lt;/h1&gt;
+
+&lt;p&gt;Let’s make a folder for our project&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;mkdir webs&lt;/code&gt; and&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;cd webs&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Create a python file (call it server.py) with the following text.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+from flask import Flask
+app = Flask(__name__)
+
+@app.route(&amp;#39;/&amp;#39;)
+def hello_world():
+    return &amp;#39;Hello&amp;#39;
+
+if __name__ == &amp;#39;__main__&amp;#39;:
+    app.run(debug=True)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now run the file.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;python3 server.py&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;The template&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+&amp;lt;!DOCTYPE html&amp;gt;
+&amp;lt;html lang=&amp;quot;en&amp;quot;&amp;gt;
+&amp;lt;body&amp;gt;
+    &amp;lt;h1&amp;gt;&amp;lt;/h1&amp;gt;
+    &amp;lt;form action=&amp;quot;/game/&amp;quot; method=&amp;quot;POST&amp;quot;&amp;gt;
+        &amp;lt;input type=&amp;quot;text&amp;quot; name=&amp;quot;text&amp;quot;&amp;gt;
+        &amp;lt;input type=&amp;quot;submit&amp;quot; name=&amp;quot;my-form&amp;quot; value=&amp;quot;Send&amp;quot;&amp;gt;
+    &amp;lt;/form&amp;gt;
+&amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Environment Diagram Rules</title>
+      <link>http://blog.sumukh.me/61a-enviroment-diag</link>
+      <pubDate>Tue, 16 Sep 2014 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://blog.sumukh.me/61a-enviroment-diag</guid>
+      <description>&lt;p&gt;Follow the rule for the approriate line of code you are executing. Recall that we start from the top of the file to the bottom.&lt;/p&gt;
+
+&lt;h2 id=&quot;creating_a_function&quot;&gt;Creating a Function&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Draw the &lt;code&gt;func &amp;lt;name&amp;gt;(&amp;lt;arg1&amp;gt;, &amp;lt;arg2&amp;gt;, ...)&lt;/code&gt;&lt;/li&gt;
+
+&lt;li&gt;The parent of the function is wherever the function was defined (the frame we’re currently in, since we’re creating the function).&lt;/li&gt;
+
+&lt;li&gt;If we used def, make a binding of the name to the value in the current frame.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;calling_user_defined_functions&quot;&gt;Calling User Defined Functions&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Evaluate the operator and operands.&lt;/li&gt;
+
+&lt;li&gt;Create a new frame; the parent is whatever the operator’s parent is. Now this is the current frame.&lt;/li&gt;
+
+&lt;li&gt;Bind the formal parameters to the argument values (the evaluated operands).&lt;/li&gt;
+
+&lt;li&gt;Evaluate the body of the operator in the context of this new frame.&lt;/li&gt;
+
+&lt;li&gt;After evaluating the body, go back to the frame that called the function.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;assignment&quot;&gt;Assignment&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Evaluate the expression to the right of the assignment operator (=).&lt;/li&gt;
+
+&lt;li&gt;If nonlocal, find the frame that has the variable you’re looking for, starting in the parent frame and ending just before the global frame (via Lookup rules). Otherwise, use the current frame. Note: If there are multiple frames that have the same variable, pick the frame closest to the current frame.&lt;/li&gt;
+
+&lt;li&gt;Bind the variable name to the value of the expression in the identified frame. Be sure you override the variable name if it had a previous binding.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;lookup&quot;&gt;Lookup&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Start at the current frame. Is the variable in this frame? If yes, that’s the answer.&lt;/li&gt;
+
+&lt;li&gt;If it isn’t, go to the parent frame and repeat 1.&lt;/li&gt;
+
+&lt;li&gt;If you run out of frames (reach the Global frame and it’s not there), complain.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;tips&quot;&gt;Tips&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;You can only bind names to values. No expressions (like 3+4) allowed on environment diagrams!&lt;/li&gt;
+
+&lt;li&gt;Frames and Functions both have parents.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Download these rules &lt;a href=&quot;http://www.ocf.berkeley.edu/~shidi/cs61a/guerrilla/env.txt&quot;&gt;as a text file&lt;/a&gt;.&lt;/p&gt;</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>How to Earn Trust</title>
+      <link>http://blog.sumukh.me/building-trust</link>
+      <pubDate>Mon, 30 Jun 2014 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://blog.sumukh.me/building-trust</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;“What’s the most important thing Amazon has done in the last 20 years?”&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Jeff Bezos asked this question two weeks ago at a &lt;a href=&quot;http://youtu.be/w95kwXy_MOY?t=8m50s&quot; title=&quot;Youtube&quot;&gt;launch event&lt;/a&gt; for their &lt;a href=&quot;http://techcrunch.com/2014/06/18/amazon-announces-the-fire-phone/&quot; title=&quot; TC Fire Phone&quot;&gt;new mobile phone&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Some would say it’s building up their Prime subscriber base while others might say it’s the technical chops of their team.&lt;/p&gt;
+
+&lt;p&gt;Jeff Bezos’ answer? &lt;strong&gt;Earning trust&lt;/strong&gt; with customers.&lt;/p&gt;
+
+&lt;h2 id=&quot;the_recipe_for_trust&quot;&gt;The recipe for trust&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Do hard things well&lt;/li&gt;
+
+&lt;li&gt;Repeat&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#39;full zoomable&#39;&gt;&lt;img alt=&#39;Source: http://techcrunch.com/2014/06/18/amazon-phone-live-blog/&#39; src=&#39;/images/trust_bezos_tc.jpg&#39; /&gt;&lt;/div&gt;
+&lt;p&gt;Bezos notes that the recipe is simple but that it’s hard to execute on. It requires more than an isolated effort - it needs to be repeated “thousands and thousands” of times.&lt;/p&gt;
+
+&lt;p&gt;What you don’t do:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;“You don’t ask for [trust]. That never works.”&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Bezos always refers to trust as something that is &lt;strong&gt;earned&lt;/strong&gt; and not built.&lt;/p&gt;
+
+&lt;h2 id=&quot;reputation&quot;&gt;Reputation&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;“Reputation is a trailing indicator of exellence.”&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Bezos pulled out a corporate reputation index poll for the past four years showing Amazon rising to the #1 position - underscoring his point that “Customers do notice.”&lt;/p&gt;
+&lt;div class=&#39;full zoomable&#39;&gt;&lt;img src=&#39;/images/amazon_reputation.png&#39; /&gt;&lt;/div&gt;</description>
+    </item>
+    
+    
+    
+    
+    
+    <item>
+      <title>Getting started with Amazon SNS Mobile Push for iOS</title>
+      <link>http://blog.sumukh.me/Using-SNS-Push</link>
+      <pubDate>Fri, 23 Aug 2013 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://blog.sumukh.me/Using-SNS-Push</guid>
+      <description>&lt;p&gt;&lt;img src=&#39;/images/apns.png&#39; style=&#39;float:right; height: 220px; padding: 10px;&#39; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Amazon recently launched &lt;a href=&quot;http://aws.amazon.com/about-aws/whats-new/2013/08/13/amazon-sns-announces-mobile-push/&quot; title=&quot;Mobile Push from Amazon SNS&quot;&gt;mobile push from Amazon SNS&lt;/a&gt;. SNS (Simple Notification Service) acts as a middle-man between your product and the relay service (Apple Push Notifications, Google Cloud Messaging etc) which means that you don’t need to worry about establishing connections, queuing messages, handling feedback, or scaling. It comes with a million push notifications a month to start with - which should be enough for now.&lt;/p&gt;
+
+&lt;h2 id=&quot;before_you_start&quot;&gt;Before you start&lt;/h2&gt;
+
+&lt;p&gt;You need an iOS Developer account so you create provisioning profiles to build to your device (and to get push working)&lt;/p&gt;
+
+&lt;p&gt;Signup for &lt;a href=&quot;http://aws.amazon.com/free/&quot; title=&quot;AWS Signup&quot;&gt;Amazon Web Services&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Xcode &amp;amp; OSX.&lt;/p&gt;
+
+&lt;p&gt;If you don’t use iOS, AWS has a good post about how to &lt;a href=&quot;http://aws.typepad.com/aws/2013/08/push-notifications-to-mobile-devices-using-amazon-sns.html&quot; title=&quot;AWS Blog&quot;&gt;get started with Android on their blog&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;so_what_do_i_do&quot;&gt;So what do I do?&lt;/h2&gt;
+
+&lt;p&gt;We’re going to be creating an app and a provisioning profile for it. For convience, you can just download the &lt;a href=&quot;https://s3.amazonaws.com/codesamples/sns/latest/snsmobilepush.zip&quot; title=&quot;AWS Blog&quot;&gt;example app&lt;/a&gt; from the documentation (Navigate to the iOS Project) If you’ve worked with push notifications before, you’re probably familiar with the process and can refer to the &lt;a href=&quot;http://docs.aws.amazon.com/sns/latest/dg/mobile-push-apns.html&quot; title=&quot;AWS Blog&quot;&gt;documentation&lt;/a&gt;. Open up the sample project and change the app identifier to something like this (It’ll be in the app’s info.plist)&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;com.yourname.app&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Follow the detailed instructions &lt;a href=&quot;http://quickblox.com/developers/How_to_create_APNS_certificates&quot; title=&quot;APNS&quot;&gt;here&lt;/a&gt; from the documentation (Navigate to the iOS Project) up to step 23 here to create a .p12 file Once you have the p12 file, run this command in Terminal (in the right directory) (replace the file names)&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;openssl pkcs12 -in myapnsappprivatekey.p12 -out myapnsappprivatekey.pem -nodes -clcerts&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Now just sign the example app with the right developer certificate and provisioning file (the one you just generated that has push notifications enabled) and when you build and run, you’ll get a Device Token kind of like this&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;Device Token = &amp;lt;examp1e 29z6j5c4 df46f809 505189c4 c83fjcgf 7f6257e9 8542d2jt 3395kj73&amp;gt;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Copy the token and navigate to the &lt;a href=&quot;https://console.aws.amazon.com/sns/&quot; title=&quot;AWS Docs&quot;&gt;SNS management page&lt;/a&gt; on the EC2 Dashboard. If you get an error that says something like &lt;code&gt;aps-enviroment&lt;/code&gt; not found, the application isn’t being signed with the right provisioning profile. Check the app identifier and the build settings.&lt;/p&gt;
+
+&lt;p&gt;Click on Add a New App and select the APNS Sandbox platform since we are provisioning the app with a development profile. Upload the .pem file that was generated from the command line and when you press load credentials from file, they should load in the boxes below.&lt;/p&gt;
+
+&lt;p&gt;You’ll now see a window at the bottom with Endpoint Actions and Add Endpoints. Each endpoint represents a device. Just add your device by pressing Add Endpoints and manually copy in your device token. You can leave the user data field blank.&lt;/p&gt;
+
+&lt;p&gt;Once you’ve added the device, you can publish to it manually type in something like, “Hello World!” and press publish.&lt;/p&gt;
+
+&lt;p&gt;If you want to get fancier try adding sounds and badges to your alerts, you can do so by changing the actual payload of the message. Try something like this&lt;/p&gt;
+&lt;div class=&#39;highlight&#39;&gt;&lt;pre&gt;&lt;code class=&#39;json&#39;&gt;&lt;span class=&#39;p&#39;&gt;{&lt;/span&gt;
+ &lt;span class=&#39;nt&#39;&gt;&amp;quot;APNS_SANDBOX&amp;quot;&lt;/span&gt;&lt;span class=&#39;p&#39;&gt;:&lt;/span&gt;&lt;span class=&#39;s2&#39;&gt;&amp;quot;{\&amp;quot;aps\&amp;quot;:{\&amp;quot;alert\&amp;quot;:\&amp;quot;Hello World!\&amp;quot;,\&amp;quot;badge\&amp;quot;:5,\&amp;quot;sound\&amp;quot;:\&amp;quot;default\&amp;quot;}}&amp;quot;&lt;/span&gt;
+&lt;span class=&#39;p&#39;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h2 id=&quot;other_things_to_note&quot;&gt;Other things to note.&lt;/h2&gt;
+
+&lt;p&gt;The mobile client can’t register with SNS directly so you’ll still have to maintain a proxy server that will handle registrations.&lt;/p&gt;
+
+&lt;p&gt;Use of SNS client libraries is required to send push notifications programatically - but the advantage is that it’s going to be cross platform.&lt;/p&gt;
+
+&lt;p&gt;If you’re having trouble using SNS to send the notifications try using a small &lt;a href=&quot;https://github.com/noodlewerk/NWPusher&quot; title=&quot;GitHub Page&quot;&gt;utility&lt;/a&gt; to send notifications from your computer&lt;/p&gt;</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Hello World</title>
+      <link>http://blog.sumukh.me/hello-world</link>
+      <pubDate>Wed, 13 Feb 2013 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://blog.sumukh.me/hello-world</guid>
+      <description>&lt;h1 id=&quot;a_first_level_header&quot;&gt;A First Level Header&lt;/h1&gt;
+
+&lt;p&gt;The quick brown fox jumped over the lazy dog’s back.&lt;/p&gt;
+
+&lt;h2 id=&quot;a_second_level_header&quot;&gt;A Second Level Header&lt;/h2&gt;
+
+&lt;p&gt;This is an &lt;a href=&quot;http://example.com/&quot; title=&quot;With a Title&quot;&gt;example link&lt;/a&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;This is a blockquote.&lt;/p&gt;
+
+&lt;p&gt;This is the second paragraph in the blockquote.&lt;/p&gt;
+
+&lt;h2 id=&quot;this_is_an_h2_in_a_blockquote&quot;&gt;This is an H2 in a blockquote&lt;/h2&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;another_second_level_header&quot;&gt;Another Second Level Header&lt;/h2&gt;
+
+&lt;p&gt;&lt;code&gt;$ ping example.com&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Zoomable images&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#39;full zoomable&#39;&gt;&lt;img src=&#39;http://static.tumblr.com/ec89b7dd768f853a23786eafc6820572/z2cl7fk/sSympedw5/tumblr_static_sf_fog.jpeg&#39; /&gt;&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;Awesome quotes&lt;/strong&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;“Effective companies tend to communicate more, their people are curious and they have opinions”&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;heres_some_code&quot;&gt;Here’s some code&lt;/h2&gt;
+&lt;div class=&#39;highlight&#39;&gt;&lt;pre&gt;&lt;code class=&#39;yaml&#39;&gt;&lt;span class=&#39;l-Scalar-Plain&#39;&gt;layout&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;l-Scalar-Plain&#39;&gt;post&lt;/span&gt;
+
+&lt;span class=&#39;l-Scalar-Plain&#39;&gt;title&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;l-Scalar-Plain&#39;&gt;Hello World&lt;/span&gt;
+&lt;span class=&#39;l-Scalar-Plain&#39;&gt;subtitle&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;s&#39;&gt;&amp;quot;What&amp;#39;s&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;in&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;the&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;box&amp;quot;&lt;/span&gt;
+
+&lt;span class=&#39;c1&#39;&gt;# Setup post cover image in /images/&lt;/span&gt;
+
+&lt;span class=&#39;c1&#39;&gt;# Keep it as draft, not published in index.html or feed.xml&lt;/span&gt;
+&lt;span class=&#39;l-Scalar-Plain&#39;&gt;draft&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;l-Scalar-Plain&#39;&gt;false&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h4 id=&quot;configurable__code_snipped_highlighting&quot;&gt;Configurable &amp;amp; Code Snipped Highlighting&lt;/h4&gt;
+
+&lt;p&gt;/assets/stylesheets/main.scss:&lt;/p&gt;
+&lt;div class=&#39;highlight&#39;&gt;&lt;pre&gt;&lt;code class=&#39;scss&#39;&gt;&lt;span class=&#39;cm&#39;&gt;/* Text colors */&lt;/span&gt;
+&lt;span class=&#39;nv&#39;&gt;$text&lt;/span&gt;&lt;span class=&#39;o&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;mh&#39;&gt;#21272d&lt;/span&gt;&lt;span class=&#39;p&#39;&gt;;&lt;/span&gt;
+&lt;span class=&#39;nv&#39;&gt;$textmuted&lt;/span&gt;&lt;span class=&#39;o&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;mh&#39;&gt;#848484&lt;/span&gt;&lt;span class=&#39;p&#39;&gt;;&lt;/span&gt;
+&lt;span class=&#39;nv&#39;&gt;$accent&lt;/span&gt;&lt;span class=&#39;o&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;mh&#39;&gt;#2077b2&lt;/span&gt;&lt;span class=&#39;p&#39;&gt;;&lt;/span&gt;    
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Stay tuned for updates.&lt;/p&gt;</description>
+    </item>
+    
+    
+    
+    
+
+  </channel> 
+</rss>

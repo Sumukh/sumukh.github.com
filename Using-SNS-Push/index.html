@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting started with Amazon SNS Mobile Push for iOS &mdash; Full Stack Product</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/images/SS_mark.png"/>
+    <link href="/feed.xml" rel="alternate" type="application/rss+xml" title="Full Stack Product" />
+    <meta name="title" content="Getting started with Amazon SNS Mobile Push for iOS ">
+    <link rel="canonical" href="http://blog.sumukh.me/Using-SNS-Push">
+     
+    <link rel="author" href="https://plus.google.com/107726423867070528349">       
+    <meta property="og:title" content="Getting started with Amazon SNS Mobile Push for iOS "/>
+    <meta property="og:url" content="http://blog.sumukh.me/Using-SNS-Push"/>
+    
+    <meta property="og:image" content="http://blog.sumukh.me/images/sns-mobile-direct.png"/>
+    
+    <meta property="og:image" content="http://blog.sumukh.me/images/SS_mark.png"/>   
+    
+    
+    <meta property="og:description" content="Amazon recently launched mobile push from Amazon SNS. Here's how you can use it to send Push Notifications for iOS"/>
+    <meta name="description" content="Amazon recently launched mobile push from Amazon SNS. Here's how you can use it to send Push Notifications for iOS"/>
+    
+    <meta property="og:site_name" content="Full Stack Product">     
+    <script src="//fast.eager.io/CUE-g6qaX_.js"></script>
+</head>
+<body>
+    
+<section class="site-nav">
+    <header>
+        <nav id="navigation">
+            <a class="brand" href="http://sumukh.me/">
+                <img src="/images/SS_mark.png" alt="Sumukh Sridhara">
+            </a>
+            <a href="http://sumukh.me/">Home</a>
+            <a href="/" class="home">Blog</a>
+
+            
+            <a href="/about/">About</a>
+        </nav>
+        <nav class="tagline">
+            <span></span>
+            <a href="http://sumukh.me/" class="btn btn-outline">Let's talk</a>
+        </nav>
+    </header>
+</section>
+
+
+<div class="article-cover">
+    <div>
+        
+            <img src="/images/sns-mobile-direct.png" class="image">
+        
+    </div>
+</div>
+
+<article>
+
+    <div class="container">
+        <header>
+            <h1 class="title">Getting started with Amazon SNS Mobile Push for iOS</h1>
+            <div class="meta">
+                By <address><a rel="author" href="" title="Sumukh Sridhara" target="_blank">Sumukh Sridhara</a></address> 
+                
+                    &mdash;
+                <time pubdate datetime="2013-23-August" title="August 23, 2013">August 23, 2013</time>
+                
+            </div>
+
+            <h2 class="subtitle">How to send iOS push notifications with SNS</h2>
+        </header>
+
+        <section>
+            <p><img src='/images/apns.png' style='float:right; height: 220px; padding: 10px;' /></p>
+
+<p>Amazon recently launched <a href="http://aws.amazon.com/about-aws/whats-new/2013/08/13/amazon-sns-announces-mobile-push/" title="Mobile Push from Amazon SNS">mobile push from Amazon SNS</a>. SNS (Simple Notification Service) acts as a middle-man between your product and the relay service (Apple Push Notifications, Google Cloud Messaging etc) which means that you don’t need to worry about establishing connections, queuing messages, handling feedback, or scaling. It comes with a million push notifications a month to start with - which should be enough for now.</p>
+
+<h2 id="before_you_start">Before you start</h2>
+
+<p>You need an iOS Developer account so you create provisioning profiles to build to your device (and to get push working)</p>
+
+<p>Signup for <a href="http://aws.amazon.com/free/" title="AWS Signup">Amazon Web Services</a>.</p>
+
+<p>Xcode &amp; OSX.</p>
+
+<p>If you don’t use iOS, AWS has a good post about how to <a href="http://aws.typepad.com/aws/2013/08/push-notifications-to-mobile-devices-using-amazon-sns.html" title="AWS Blog">get started with Android on their blog</a></p>
+
+<h2 id="so_what_do_i_do">So what do I do?</h2>
+
+<p>We’re going to be creating an app and a provisioning profile for it. For convience, you can just download the <a href="https://s3.amazonaws.com/codesamples/sns/latest/snsmobilepush.zip" title="AWS Blog">example app</a> from the documentation (Navigate to the iOS Project) If you’ve worked with push notifications before, you’re probably familiar with the process and can refer to the <a href="http://docs.aws.amazon.com/sns/latest/dg/mobile-push-apns.html" title="AWS Blog">documentation</a>. Open up the sample project and change the app identifier to something like this (It’ll be in the app’s info.plist)</p>
+
+<p><code>com.yourname.app</code></p>
+
+<p>Follow the detailed instructions <a href="http://quickblox.com/developers/How_to_create_APNS_certificates" title="APNS">here</a> from the documentation (Navigate to the iOS Project) up to step 23 here to create a .p12 file Once you have the p12 file, run this command in Terminal (in the right directory) (replace the file names)</p>
+
+<p><code>openssl pkcs12 -in myapnsappprivatekey.p12 -out myapnsappprivatekey.pem -nodes -clcerts</code></p>
+
+<p>Now just sign the example app with the right developer certificate and provisioning file (the one you just generated that has push notifications enabled) and when you build and run, you’ll get a Device Token kind of like this</p>
+
+<p><code>Device Token = &lt;examp1e 29z6j5c4 df46f809 505189c4 c83fjcgf 7f6257e9 8542d2jt 3395kj73&gt;</code></p>
+
+<p>Copy the token and navigate to the <a href="https://console.aws.amazon.com/sns/" title="AWS Docs">SNS management page</a> on the EC2 Dashboard. If you get an error that says something like <code>aps-enviroment</code> not found, the application isn’t being signed with the right provisioning profile. Check the app identifier and the build settings.</p>
+
+<p>Click on Add a New App and select the APNS Sandbox platform since we are provisioning the app with a development profile. Upload the .pem file that was generated from the command line and when you press load credentials from file, they should load in the boxes below.</p>
+
+<p>You’ll now see a window at the bottom with Endpoint Actions and Add Endpoints. Each endpoint represents a device. Just add your device by pressing Add Endpoints and manually copy in your device token. You can leave the user data field blank.</p>
+
+<p>Once you’ve added the device, you can publish to it manually type in something like, “Hello World!” and press publish.</p>
+
+<p>If you want to get fancier try adding sounds and badges to your alerts, you can do so by changing the actual payload of the message. Try something like this</p>
+<div class='highlight'><pre><code class='json'><span class='p'>{</span>
+ <span class='nt'>&quot;APNS_SANDBOX&quot;</span><span class='p'>:</span><span class='s2'>&quot;{\&quot;aps\&quot;:{\&quot;alert\&quot;:\&quot;Hello World!\&quot;,\&quot;badge\&quot;:5,\&quot;sound\&quot;:\&quot;default\&quot;}}&quot;</span>
+<span class='p'>}</span>
+</code></pre></div>
+<h2 id="other_things_to_note">Other things to note.</h2>
+
+<p>The mobile client can’t register with SNS directly so you’ll still have to maintain a proxy server that will handle registrations.</p>
+
+<p>Use of SNS client libraries is required to send push notifications programatically - but the advantage is that it’s going to be cross platform.</p>
+
+<p>If you’re having trouble using SNS to send the notifications try using a small <a href="https://github.com/noodlewerk/NWPusher" title="GitHub Page">utility</a> to send notifications from your computer</p>
+            
+<div class="social">
+    <div>
+        <a href="https://twitter.com/share" class="twitter-share-button"  data-text="Getting started with Amazon SNS Mobile Push for iOS" data-related="sumukhsridhara">Tweet</a>
+    </div>
+    
+    
+    <div>
+        <div class="fb-like" data-width="150" data-layout="button_count" data-action="like" data-show-faces="true" data-send="false"></div>
+    </div>
+    
+    
+    
+    
+</div>
+
+        </section>
+
+        <footer>
+            <address>
+               <img src="/images/avatar_medium.png">
+                <p>Written by <strong><a rel="author" href="https://twitter.com/sumukhsridhara" title="" target="_blank">Sumukh Sridhara</a></strong><br>
+                <span class="muted">iOS + Web Developer.</span>
+                </p>
+            </address>
+
+        </footer>
+
+        
+        <section>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'sumukhme'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+        </section>
+        
+    </div>
+</article>
+
+
+<footer class="site-footer">
+    <div class="container">
+        &copy; 2014 
+        
+        <nav>
+            <a href="http://sumukh.me/">Sumukh Sridhara</a>&middot;
+            <a href="http://sumukh.me/">Home</a>&middot;            
+
+            
+            <a href="/" class="home">Blog</a>
+            &middot; 
+            <a href="/about/">About</a>
+        </nav>
+        
+        <nav class="social">
+            
+            <a href="https://twitter.com/sumukhsridhara" title="Follow on Twitter" target="_blank"><i class="icon icon-twitter black"></i></a>
+            
+                
+
+            <a href="/feed.xml" title="RSS Feed">
+                <i class="icon icon-rss black"></i>
+            </a>
+        </nav>
+    </div>
+</footer>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/main.js"></script>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=253595308025739";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <!--analytics-->
+<script type="text/javascript">
+window.analytics=window.analytics||[],window.analytics.methods=["identify","group","track","page","pageview","alias","ready","on","once","off","trackLink","trackForm","trackClick","trackSubmit"],window.analytics.factory=function(t){return function(){var a=Array.prototype.slice.call(arguments);return a.unshift(t),window.analytics.push(a),window.analytics}};for(var i=0;i<window.analytics.methods.length;i++){var key=window.analytics.methods[i];window.analytics[key]=window.analytics.factory(key)}window.analytics.load=function(t){if(!document.getElementById("analytics-js")){var a=document.createElement("script");a.type="text/javascript",a.id="analytics-js",a.async=!0,a.src=("https:"===document.location.protocol?"https://":"http://")+"cdn.segment.io/analytics.js/v1/"+t+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n)}},window.analytics.SNIPPET_VERSION="2.0.9",
+window.analytics.load("c4p56oquyh");
+window.analytics.page();
+</script>
+
+
+
+
+</body>
+</html>

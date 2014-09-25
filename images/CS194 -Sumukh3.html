@@ -1,0 +1,403 @@
+<h1 id="cs194-15-assignment-1">CS194-15 Assignment 1</h1>
+
+
+
+<h2 id="sumukh-sridhara">Sumukh Sridhara  </h2>
+
+
+
+<h2 id="cs194-ad">(cs194-ad)</h2>
+
+<p>September 16th 2014. </p>
+
+<p>Measuring CPU Performance  </p>
+
+<p><div class="toc"><div class="toc">
+<ul>
+<li><a href="#cs194-15-assignment-1">CS194-15 Assignment 1</a><ul>
+<li><a href="#sumukh-sridhara">Sumukh Sridhara  </a></li>
+<li><a href="#cs194-ad">(cs194-ad)</a></li>
+</ul>
+</li>
+<li><a href="#question-1">Question 1</a><ul>
+<li><a href="#131-results">1.3.1 - Results</a></li>
+<li><a href="#132-timing-2-points">1.3.2 - Timing (2 points) </a></li>
+<li><a href="#133-accuracy-2-points">1.3.3 - Accuracy (2 points) </a></li>
+<li><a href="#134-atoi-argv-2-points">1.3.4 - atoi + argv (2 points) </a></li>
+</ul>
+</li>
+<li><a href="#question-2-memory-latency">Question 2 - Memory Latency</a><ul>
+<li><a href="#231-pointer-chasing-explanation-2-points">2.3.1 - Pointer Chasing Explanation (2 points) </a></li>
+<li><a href="#232-int-array-size-1-point">2.3.2 - int array size (1 point) </a></li>
+<li><a href="#233-graph-32-points">2.3.3 - Graph (32 Points) </a></li>
+<li><a href="#234-change-in-the-curve">2.3.4 - Change in the curve </a></li>
+<li><a href="#235-pipeline-2-points">2.3.5 - Pipeline (2 points)</a></li>
+<li><a href="#bonus">Bonus : </a></li>
+</ul>
+</li>
+<li><a href="#part-4">Part 4</a><ul>
+<li><a href="#431-flopsipc-table-6-4-points">4.3.1 Flops/IPC Table (6 * 4 Points) </a></li>
+<li><a href="#432-how-many-flopss-3-points">4.3.2 How many Flops(s)? (3 Points) </a></li>
+<li><a href="#433-ipc-1-2-points">4.3.3 IPC &gt; 1 (2 Points) </a></li>
+<li><a href="#433-flops-vs-ipc-2-points">4.3.3 Flops vs. IPC (2 Points) </a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</p>
+
+<hr>
+
+
+
+<h1 id="question-1">Question 1</h1>
+
+
+
+<h2 id="131-results">1.3.1 - Results</h2>
+
+<p>With Printing: </p>
+
+<blockquote>
+  <p>With O2 - Cycles to compute the sum = 49995000</p>
+
+<pre><code>hive15 [38] g++ -msse4 -O2 counters.cpp sum.cpp -o sum
+hive15 [39] ./sum 10000
+Sum is 49995000
+Steps taken 21437
+</code></pre>
+  
+  <p>Without O2 - Cycles to compute the sum =  54191704</p>
+
+<pre><code>hive15 [40] ~/hw1 # g++ -msse4 counters.cpp sum.cpp -o sum
+hive15 [41] ~/hw1 # ./sum 10000
+Sum is 54191704
+Steps taken 62884
+</code></pre>
+  
+  <blockquote>
+    <p><strong>Comment:</strong> The sum is incorrect.</p>
+  </blockquote>
+</blockquote>
+
+<hr>
+
+<p>Without Printing: </p>
+
+<blockquote>
+  <p>With O2 - Cycles to compute the sum = 1401</p>
+
+<pre><code>hive15 [43] ~/hw1 # g++ -msse4 -O2 counters.cpp sum.cpp -o sum
+hive15 [44] ~/hw1 # ./sum 10000
+Steps taken 1401
+</code></pre>
+  
+  <blockquote>
+    <p><strong>Comment:</strong> It seems to avoid the naive computation.</p>
+  </blockquote>
+  
+  <p>Without O2 - Cycles to compute the sum =  62899</p>
+
+<pre><code>hive15 [45] ~/hw1 # g++ -msse4 counters.cpp sum.cpp -o sum
+hive15 [46] ~/hw1 # ./sum 10000
+Steps taken 62899
+</code></pre>
+</blockquote>
+
+<hr>
+
+<p>Hardcoding loop iteration:  <br>
+Avoided user input in the loop and set it to 10000 </p>
+
+<blockquote>
+  <p>With O2 (and no printing) Cycles to compute the sum = 1475</p>
+
+<pre><code>hive15 [50] ~/hw1 # g++ -msse4 -O2 counters.cpp sum.cpp -o sum
+hive15 [51] ~/hw1 # ./sum
+Steps taken 1475
+</code></pre>
+  
+  <p>Without O2 (and no printing)  - Cycles to compute the sum =  66772</p>
+
+<pre><code>hive15 [48] ~/hw1 # g++ -msse4 counters.cpp sum.cpp -o sum 
+hive15 [49] ~/hw1 # ./sum 
+Steps taken 66772
+</code></pre>
+  
+  <p>With O2 (but with printing) - 1376</p>
+
+<pre><code>hive15 [53] ~/hw1 # g++ -msse4 -O2 counters.cpp sum.cpp -o sum
+hive15 [54] ~/hw1 # ./sum
+Sum is 49995000
+Steps taken 1376
+</code></pre>
+  
+  <p>Without O2 (but with printing) - 66843</p>
+
+<pre><code>hive15 [57] ~/hw1 # g++ -msse4 -O2 counters.cpp sum.cpp -o sum
+hive15 [58] ~/hw1 # ./sum
+Sum is 49995000
+Steps taken 66843
+</code></pre>
+</blockquote>
+
+<hr>
+
+
+
+<h2 id="132-timing-2-points">1.3.2 - Timing (2 points) </h2>
+
+<p>Time all eight configurations (see all the above ones) and explain the discrepancies. </p>
+
+<pre><code>1st test: 
+    Running with O2 (but with printing &amp; user input): The compiler performs optimizations to the rather naive code to enable a 3x speedup. 
+
+    Without O2 - the code runs naively with no optimzations. 
+
+Without the print statements: 
+    1. When I ran it with 02 - one of the compiler optimizations must have been to realize that it didn't need to to compute the sum - so it avoided doing that calculation naively. It may have unrolled the loop or used more advanced optimizations. 
+    2. Without 02 - It ran in about the same time (+/- 15 cycles) as normal execution with printing. 
+
+Without user input (hardcoding)
+    1. With 02 (and no printing) - this ran in about the same time (+/- 5%) as O2 with user input. This is because the optimizations that speed up the loop in the first place. By not having to print the value, it might be able to even avoid doing the computation. 
+
+    2. Without O2 (and no printing of the variable) - this actually was about 6% longer - not a huge difference but it looks like not printing didn't help because there weren't any optimizations made(the print statement only runs once anyway).
+
+    3. With O2 &amp; With printing - This was the fastest of all the tests. By hard coding the value of the loop the O2 can unroll the loop and include the optimzations. 
+
+    4. Without O2 &amp; With printing - This took as long as the normal code without O2. Hardcoding the value didn't save that much computation because most of the work is the for loop.
+</code></pre>
+
+
+
+<h2 id="133-accuracy-2-points">1.3.3 - Accuracy (2 points) </h2>
+
+<p>Which configuration is the most accurate? </p>
+
+<p>This configuration - O2 With Printing and Without User Input. (and hard-coding). This is also the fastest. </p>
+
+
+
+<h2 id="134-atoi-argv-2-points">1.3.4 - atoi + argv (2 points) </h2>
+
+<p>What is <code>argv[1]</code>?  </p>
+
+<p><code>argv</code> is the array that holds the command line arguments. <code>argv[1]</code> is the actual parameter (which is <code>10000</code> in this case). (BTW - index[<code>0</code>] is the entire command). </p>
+
+<p>What is <code>atoi()</code>?</p>
+
+<p>This is a function that takes in a string and coverts it to an integer. When we combine the two  - <code>atoi(argv[1])</code> - returns the integer value of the parameter. </p>
+
+
+
+<h1 id="question-2-memory-latency">Question 2 - Memory Latency</h1>
+
+
+
+<h2 id="231-pointer-chasing-explanation-2-points">2.3.1 - Pointer Chasing Explanation (2 points) </h2>
+
+<p>How does pointer chasing measure memory latency?: </p>
+
+<p>It measures it trying to access random locations in the array - essentially jumping between places in the array. Through the random accesses to different parts of the array - we invalidate the benefit of caching and have to read from memory almost every time. This for loop really tests the time it takes to do the reads from memory.</p>
+
+<pre><code>for (int k = 0; k &lt; 1048576; k++ ) {
+    j = randNum[j];
+}
+</code></pre>
+
+
+
+<h2 id="232-int-array-size-1-point">2.3.2 - int array size (1 point) </h2>
+
+<p>How many bytes is an int array of length N? </p>
+
+<p>sizeof(int) is 4bytes so an int array of length N is 4N bytes</p>
+
+
+
+<h2 id="233-graph-32-points">2.3.3 - Graph (32 Points) </h2>
+
+<p><img src="https://docs.google.com/a/berkeley.edu/spreadsheets/d/1FoZMzr9YUPaKLpPbYVAaLKtDn-xAc-B6iOtA9jMj-pM/embed/oimg?id=1FoZMzr9YUPaKLpPbYVAaLKtDn-xAc-B6iOtA9jMj-pM&amp;oid=185735040&amp;zx=yv8zno8071qb" alt="Graph" title="Graph"></p>
+
+<p><a href="http://docs.google.com/a/berkeley.edu/spreadsheets/d/1FoZMzr9YUPaKLpPbYVAaLKtDn-xAc-B6iOtA9jMj-pM/gviz/chartiframe?oid=185735040">http://docs.google.com/a/berkeley.edu/spreadsheets/d/1FoZMzr9YUPaKLpPbYVAaLKtDn-xAc-B6iOtA9jMj-pM/gviz/chartiframe?oid=185735040</a></p>
+
+<p>Re: Graph - See Attached JPG Above. </p>
+
+
+
+<h2 id="234-change-in-the-curve">2.3.4 - Change in the curve </h2>
+
+<p>Explain change in shape of the curve: </p>
+
+<p>As the array size increases, the ability of the to cache the array decreases. Intially a good portion fits lower on the cache hierarchy (aka closer to the cpu) - however as the size grows it rapidly loses this advantage (the slope increases rapidly). It then moves onto the next cache level - which allows it to fit a larger size cache and the slope decreases as its on the same level. When it then starts to use the entirety of the cache the slope is relatively low. This process repeats as the size of the array grows (as result of moving between levels of caches) - though eventually you grow out of space on caches and you need to go to DRAM more and more often. </p>
+
+
+
+<h2 id="235-pipeline-2-points">2.3.5 - Pipeline (2 points)</h2>
+
+<p>Pipelining &amp; OOO affecting our benchmark: </p>
+
+<pre><code>This doesn't affect our benchmark because we introduce a "data hazard". We force the instructions to wait until we've fetched the data from memory. Only then can the next instruction know the location from memory that it should fetch from since there is a data dependency. This dependency prevents the CPU from running multiple instructions or heavily pipelining. 
+</code></pre>
+
+
+
+<h2 id="bonus">Bonus : </h2>
+
+<p>Here’s the outline of code required to detect the amount of unique walks. Basically we implement cycle detection by walking through the array and we measure the amount of steps we can get through before running into an index we’ve seen before. We then return the counter (the loop iteration variable)</p>
+
+<pre class="prettyprint"><code class=" hljs asciidoc">int unique<span class="hljs-emphasis">_vals(int *orig, int length) {
+    int seen[length];
+    int x = 0;
+
+</span><span class="hljs-code">    for (int i = 0; i &lt; length; i++ ){</span>
+<span class="hljs-code">        seen[i] = -1; </span>
+<span class="hljs-code">    }</span>
+
+<span class="hljs-code">    for (int i = 0; i &lt; length; i++) {</span>
+<span class="hljs-code">        int y = x; </span>
+<span class="hljs-code">        x = orig[x]; </span>
+<span class="hljs-code">        if (seen[x] == 1) {</span>
+<span class="hljs-code">            return i; </span>
+<span class="hljs-code">        } </span>
+<span class="hljs-code">        seen[y] == 1;</span>
+<span class="hljs-code">    }</span>
+<span class="hljs-code">    //We got through the entire list. </span>
+<span class="hljs-code">    return length;</span>
+}
+
+
+# Part 3
+
+<span class="hljs-header">3.4.1 Measuring Memory Bandwidth 
+------</span>
+
+1. Plot:
+![Graph](https://docs.google.com/a/berkeley.edu/spreadsheets/d/1FoZMzr9YUPaKLpPbYVAaLKtDn-xAc-B6iOtA9jMj-pM/embed/oimg?id=1FoZMzr9YUPaKLpPbYVAaLKtDn-xAc-B6iOtA9jMj-pM&amp;oid=1660941341&amp;zx=ehog55415xf7 "Graph")
+X Axis is Log Scale / Kilobytes
+Y Axis is in Mbps 
+
+See above PNG
+Also: http://docs.google.com/a/berkeley.edu/spreadsheets/d/1FoZMzr9YUPaKLpPbYVAaLKtDn-xAc-B6iOtA9jMj-pM/gviz/chartiframe?oid=1660941341
+
+<span class="hljs-header">3.4.2 Shape of the Curve (4 points) 
+----------</span>
+The two simd copy methods perform better than the naive implementation.  The naive implementation experiences a sudden increase in bandwidth between 1024KB and 2048KB. I imagine because the naive algorithm increase is because it can start effectively caching on L3 and higher caches  - but this could be a fluke. As for other increases, SIMD Mem Cache experiences increases near the beginning and before 1000KB. This seems to be the result of taking better advantages of caches. The overall pattern is for bandwidth to decrease - but for small periods the code can actually take advantage of the cache (not fill it up) so it will become faster - but after a while it loses that benefit and the code  slows down. 
+
+<span class="hljs-header">3.4.2 Warming up the cache (2 Points)
+----------</span>
+Why do we need to warm up the cache: 
+We want an equitable test - and not the test cache invalidation and make sure what was in the cache before does not affect our results. It hypothetically could affect the other algorithms if they also need to invalidate the previous ones results.  
+
+<span class="hljs-header">3.4.3 Efficiency &amp; Accuracy (2 Points)
+----------</span>
+An inefficient copy would be bound by software bottlenecks and not memory bottlenecks. This would imply a slow implementation would result in the test revealing a slow memory bandwidth - it would take longer than it should. The software should be as fast as possible to isolate the memory bandwidth as the only bottleneck - because we're trying to measure memory. (If it's CPU bound - all memory would perform very similiarly) 
+
+<span class="hljs-header">3.4.3 Intrinsics (2 x 3 Points)
+----------</span>
+
+Intrinsics Calls: 
+
+<span class="hljs-smartquote">`_mm_prefetch` -  It tells the CPU to fetch the data at a memory address into a specific place in the caching heirarchy - but in this case it'</span>s hinting towards Non-temporal accesss - this helps it load a bunch of data without filling up the caches. 
+
+<span class="hljs-code">`_mm_load_si128`</span> - This loads 128bit integer from memory. 
+
+<span class="hljs-smartquote">`_mm_stream_si128` - This stores a 128bit integer (2nd param) into a 16bit aligned memory address (1st param) except this doesn'</span>t follow the normal caching rules (so it avoids caching)
+
+<span class="hljs-code">`_mm_store_si128`</span>  - This stores a 128bit integer (2nd param) into a 16bit aligned memory address (1st param)
+
+Sources: 
+https://software.intel.com/sites/landingpage/IntrinsicsGuide/
+http://stackoverflow.com/questions/37070/what-is-the-meaning-of-non-temporal-memory-accesses-in-x86
+http://lwn.net/Articles/255364/
+
+<span class="hljs-header">3.4.4 Bonus
+------</span>
+Here's the outline of code required to detect the amount of unique walks. Basically we implement cycle detection by walking through the array and we measure the amount of steps we can get through before running into an index we've seen before. We then return the counter (the loop iteration variable) 
+<span class="hljs-code">```</span>C
+int unique<span class="hljs-emphasis">_vals(int *orig, int length) {
+    int seen[length];
+    int x = 0;
+    int y = 0;
+    for (int i = 0; i &lt; length; i++ ){
+        seen[i] = -1; 
+    }
+
+</span><span class="hljs-code">    for (int i = 0; i &lt; length; i++) {</span>
+<span class="hljs-code">        y = x; </span>
+<span class="hljs-code">        x = orig[x]; </span>
+<span class="hljs-code">        if (seen[x] == 1) {</span>
+<span class="hljs-code">            return i; </span>
+<span class="hljs-code">        } </span>
+<span class="hljs-code">        seen[y] == 1;</span>
+<span class="hljs-code">    }</span>
+<span class="hljs-code">    //We got through the entire list. </span>
+<span class="hljs-code">    return length;</span>
+}</code></pre>
+
+<hr>
+
+<h1 id="part-4">Part 4</h1>
+
+
+
+<h2 id="431-flopsipc-table-6-4-points">4.3.1 Flops/IPC Table (6 * 4 Points) </h2>
+
+<p>Multiplying matrices of size <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-1-Frame" role="textbox" aria-readonly="true"><nobr><span class="math" id="MathJax-Span-1" style="width: 1.54em; display: inline-block;"><span style="display: inline-block; position: relative; width: 1.342em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.193em 1000.002em 2.383em -0.394em); top: -2.23em; left: 0.002em;"><span class="mrow" id="MathJax-Span-2"><span class="msubsup" id="MathJax-Span-3"><span style="display: inline-block; position: relative; width: 1.292em; height: 0px;"><span style="position: absolute; clip: rect(1.639em 1000.002em 2.631em -0.394em); top: -2.478em; left: 0.002em;"><span class="mn" id="MathJax-Span-4" style="font-family: STIXGeneral-Regular;">2</span><span style="display: inline-block; width: 0px; height: 2.483em;"></span></span><span style="position: absolute; top: -2.676em; left: 0.499em;"><span class="texatom" id="MathJax-Span-5"><span class="mrow" id="MathJax-Span-6"><span class="mn" id="MathJax-Span-7" style="font-size: 70.7%; font-family: STIXGeneral-Regular;">10</span></span></span><span style="display: inline-block; width: 0px; height: 2.284em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 2.235em;"></span></span></span><span style="border-left-width: 0.003em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 1.114em; vertical-align: -0.053em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-1">2^{10}</script> (1024)  <br>
+IPC = Instructions per cycle. </p>
+
+<p><strong>Results:</strong> </p>
+
+<table>
+<thead>
+<tr>
+  <th align="left">Name</th>
+  <th align="right">Gigaflops</th>
+  <th align="center">IPC</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td align="left">opt_simd_sgemm</td>
+  <td align="right">9.001861</td>
+  <td align="center">2.350218</td>
+</tr>
+<tr>
+  <td align="left">opt_scalar1_sgemm</td>
+  <td align="right">1.098515</td>
+  <td align="center">2.596334</td>
+</tr>
+<tr>
+  <td align="left">opt_scalar0_sgemm</td>
+  <td align="right">0.888449</td>
+  <td align="center">0.731702</td>
+</tr>
+<tr>
+  <td align="left">naive_sgemm</td>
+  <td align="right">0.212952</td>
+  <td align="center">0.328017</td>
+</tr>
+</tbody></table>
+
+
+
+
+<h2 id="432-how-many-flopss-3-points">4.3.2 How many Flops(s)? (3 Points) </h2>
+
+<p>In terms of <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-2-Frame" role="textbox" aria-readonly="true"><nobr><span class="math" id="MathJax-Span-8" style="width: 0.548em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.499em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.887em 1000.002em 2.631em -0.444em); top: -2.478em; left: 0.002em;"><span class="mrow" id="MathJax-Span-9"><span class="mi" id="MathJax-Span-10" style="font-family: STIXGeneral-Italic;">n</span></span><span style="display: inline-block; width: 0px; height: 2.483em;"></span></span></span><span style="border-left-width: 0.003em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 0.614em; vertical-align: -0.053em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-2">n</script> the size of the two square matrices - we can represent the number of flops required to multiply those two as <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-3-Frame" role="textbox" aria-readonly="true"><nobr><span class="math" id="MathJax-Span-11" style="width: 2.78em; display: inline-block;"><span style="display: inline-block; position: relative; width: 2.483em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.491em 1000.002em 2.631em -0.394em); top: -2.478em; left: 0.002em;"><span class="mrow" id="MathJax-Span-12"><span class="mn" id="MathJax-Span-13" style="font-family: STIXGeneral-Regular;">2</span><span class="mo" id="MathJax-Span-14" style="font-family: STIXGeneral-Regular; padding-left: 0.25em;">∗</span><span class="msubsup" id="MathJax-Span-15" style="padding-left: 0.25em;"><span style="display: inline-block; position: relative; width: 0.945em; height: 0px;"><span style="position: absolute; clip: rect(1.887em 1000.002em 2.631em -0.444em); top: -2.478em; left: 0.002em;"><span class="mi" id="MathJax-Span-16" style="font-family: STIXGeneral-Italic;">n</span><span style="display: inline-block; width: 0px; height: 2.483em;"></span></span><span style="position: absolute; top: -2.626em; left: 0.499em;"><span class="mn" id="MathJax-Span-17" style="font-size: 70.7%; font-family: STIXGeneral-Regular;">3</span><span style="display: inline-block; width: 0px; height: 2.284em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 2.483em;"></span></span></span><span style="border-left-width: 0.003em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 1.058em; vertical-align: -0.053em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-3">2*n^3</script>. There are <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-4-Frame" role="textbox" aria-readonly="true"><nobr><span class="math" id="MathJax-Span-18" style="width: 1.143em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.995em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.243em 1000.002em 2.383em -0.444em); top: -2.23em; left: 0.002em;"><span class="mrow" id="MathJax-Span-19"><span class="msubsup" id="MathJax-Span-20"><span style="display: inline-block; position: relative; width: 0.945em; height: 0px;"><span style="position: absolute; clip: rect(1.887em 1000.002em 2.631em -0.444em); top: -2.478em; left: 0.002em;"><span class="mi" id="MathJax-Span-21" style="font-family: STIXGeneral-Italic;">n</span><span style="display: inline-block; width: 0px; height: 2.483em;"></span></span><span style="position: absolute; top: -2.626em; left: 0.499em;"><span class="mn" id="MathJax-Span-22" style="font-size: 70.7%; font-family: STIXGeneral-Regular;">2</span><span style="display: inline-block; width: 0px; height: 2.284em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 2.235em;"></span></span></span><span style="border-left-width: 0.003em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 1.058em; vertical-align: -0.053em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-4">n^2</script> elements in each array and we need to do <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-5-Frame" role="textbox" aria-readonly="true"><nobr><span class="math" id="MathJax-Span-23" style="width: 3.028em; display: inline-block;"><span style="display: inline-block; position: relative; width: 2.681em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.639em 1000.002em 2.631em -0.394em); top: -2.478em; left: 0.002em;"><span class="mrow" id="MathJax-Span-24"><span class="mn" id="MathJax-Span-25" style="font-family: STIXGeneral-Regular;">2</span><span class="mi" id="MathJax-Span-26" style="font-family: STIXGeneral-Italic;">n</span><span class="mo" id="MathJax-Span-27" style="font-family: STIXGeneral-Regular; padding-left: 0.25em;">−</span><span class="mn" id="MathJax-Span-28" style="font-family: STIXGeneral-Regular; padding-left: 0.25em;">1</span></span><span style="display: inline-block; width: 0px; height: 2.483em;"></span></span></span><span style="border-left-width: 0.003em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 0.892em; vertical-align: -0.053em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-5">2n-1</script> additions (naive matrix multiplication has additions). This makes the entire function perform approximately <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-6-Frame" role="textbox" aria-readonly="true"><nobr><span class="math" id="MathJax-Span-29" style="width: 1.689em; display: inline-block;"><span style="display: inline-block; position: relative; width: 1.491em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.491em 1000.002em 2.631em -0.394em); top: -2.478em; left: 0.002em;"><span class="mrow" id="MathJax-Span-30"><span class="mn" id="MathJax-Span-31" style="font-family: STIXGeneral-Regular;">2</span><span class="msubsup" id="MathJax-Span-32"><span style="display: inline-block; position: relative; width: 0.945em; height: 0px;"><span style="position: absolute; clip: rect(1.887em 1000.002em 2.631em -0.444em); top: -2.478em; left: 0.002em;"><span class="mi" id="MathJax-Span-33" style="font-family: STIXGeneral-Italic;">n</span><span style="display: inline-block; width: 0px; height: 2.483em;"></span></span><span style="position: absolute; top: -2.626em; left: 0.499em;"><span class="mn" id="MathJax-Span-34" style="font-size: 70.7%; font-family: STIXGeneral-Regular;">3</span><span style="display: inline-block; width: 0px; height: 2.284em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 2.483em;"></span></span></span><span style="border-left-width: 0.003em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 1.058em; vertical-align: -0.053em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-6">2n^3</script> operations. </p>
+
+
+
+<h2 id="433-ipc-1-2-points">4.3.3 IPC &gt; 1 (2 Points) </h2>
+
+<p>It’s not actually computing more than one instruction per cycle but rather using the full power of the CPU to execute multiple instructions in one cycle using native optimizations like Intel intrinsics, simd, sse etc. By using these optimizations to compute multiple things at once (again using native CPU optimizations), more work can be done in a cycle and the IPC count will appear to be &gt; 1.  </p>
+
+
+
+<h2 id="433-flops-vs-ipc-2-points">4.3.3 Flops vs. IPC (2 Points) </h2>
+
+<p>Despite having a lower IPC, SIMD is performing more work because it is more tuned towards doing more/quicker floating point operations. (Optimized on the hardware). SIMD bunches up the operations it does into one instruction so it might seem like a similar or lower IPC (aka Single Instruction Multiple Data)   - but it’s doing more work that scalar1. A higher IPC is not necessarily an indicator of efficiency - we don’t know what the instructions are. We could do a bunch of optimized but useless calculations to increase IPC - but not actually speed up the program. </p>
+
+<blockquote>
+  <p>Sumukh Sridhara</p>
+</blockquote>
